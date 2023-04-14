@@ -1,0 +1,13 @@
+lockfileVersion: '6.0'
+
+dependencies:
+  kysely:
+    specifier: ^0.24.2
+    version: 0.24.2
+
+packages:
+
+  /kysely@0.24.2:
+    resolution: {integrity: sha512-+7eaTJNUYm2yRq1x+lEOZc+78TO35dTZ9b0dh49+Z9CTt2byMSbMiOKpwPlOyCAaHD4kILkAYWYZNywFlmBwRA==}
+    engines: {node: '>=14.0.0'}
+    dev: false
