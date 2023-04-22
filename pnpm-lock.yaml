@@ -1,11 +1,19 @@
 lockfileVersion: '6.0'
 
 dependencies:
+  hono:
+    specifier: ^3.1.5
+    version: 3.1.5
   kysely:
     specifier: ^0.24.2
     version: 0.24.2
 
 packages:
+
+  /hono@3.1.5:
+    resolution: {integrity: sha512-ypFLhNYoXXtep4I9zJt3VpB5/Ze3p9BLU4dpnAp7fxHOmSg8lu/Wwjs5sTJnb2GwVdfjbt9KFB9alA4Zt/P0jw==}
+    engines: {node: '>=16.0.0'}
+    dev: false
 
   /kysely@0.24.2:
     resolution: {integrity: sha512-+7eaTJNUYm2yRq1x+lEOZc+78TO35dTZ9b0dh49+Z9CTt2byMSbMiOKpwPlOyCAaHD4kILkAYWYZNywFlmBwRA==}

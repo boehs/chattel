@@ -1,8 +1,7 @@
 import {Generated} from 'kysely'
 import { ItemTypes, Status } from './shared'
 
-type Time = `${number}:${number}`
-type Date = `${number}/${number}/${number}${` ${Time}` | undefined}`
+type Date = `${number}/${number}/${number}`
 type When = "Today" | "Evening" | "Someday" | Date | null
 
 interface Item {
@@ -17,9 +16,17 @@ interface Item {
     status: Status
 }
 
+interface TimeBlocks {
+    id: Generated<number>,
+    item: number
+    start: number,
+    end: number
+}
+
 interface User {
     id: Generated<number>
     uuid: Generated<number>
+    invites: boolean
 }
 
 interface ItemTags {
@@ -30,4 +37,18 @@ interface ItemTags {
 interface Tag {
     id: Generated<number>
     title: Generated<number>
+}
+
+interface invites {
+    code: string
+    by: number
+}
+
+export interface Db {
+    item: Item
+    itmeBlocks: TimeBlocks,
+    itemTags: ItemTypes,
+    tag: Tag
+    user: User
+    invites: invites
 }
