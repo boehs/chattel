@@ -414,6 +414,9 @@ name = "chattel-backend"
 version = "0.1.0"
 dependencies = [
  "chattel-backend-api",
+ "migration",
+ "sea-orm",
+ "tokio",
 ]
 
 [[package]]
@@ -422,7 +425,6 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "migration",
- "tokio",
  "tower-cookies",
 ]
 

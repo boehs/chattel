@@ -6,9 +6,20 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace]
-members = [".", "api", "core", 
+members = [".", "api", "core",
 #"entity",
 "migration"]
 
 [dependencies]
 chattel-backend-api = { path = "api" }
+#entity = { path = "entity" }
+migration = { path = "migration" } # depends on your needs
+tokio = { version = "1.27.0", features = ["full"] }
+
+[dependencies.sea-orm]
+version = "^0"
+features = [
+    "runtime-tokio-native-tls",
+    "sqlx-sqlite",
+    "with-time"
+]

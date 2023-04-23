@@ -1,13 +1,11 @@
-use axum::{routing::get, Router};
+use std::error::Error;
+
+use migration::{Migrator, MigratorTrait};
 
 #[tokio::main]
-async fn main() {
-    // build our application with a single route
-    let app = Router::new().route("/", get(|| async { "Hello, World!" }));
+async fn main() -> Result<(), Box<dyn Error>> {
+    let connection = sea_orm::Database::connect("sqlite://sqlite.db").await?;
+    Migrator::up(&connection, None).await?;
 
-    // run it with hyper on localhost:3000
-    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    Ok(())
 }
