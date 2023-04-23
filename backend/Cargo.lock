@@ -414,8 +414,11 @@ name = "chattel-backend"
 version = "0.1.0"
 dependencies = [
  "chattel-backend-api",
+ "entity",
  "migration",
  "sea-orm",
+ "serde",
+ "serde_json",
  "tokio",
 ]
 
@@ -424,7 +427,7 @@ name = "chattel-backend-api"
 version = "0.1.0"
 dependencies = [
  "axum",
- "migration",
+ "entity",
  "tower-cookies",
 ]
 
@@ -432,6 +435,7 @@ dependencies = [
 name = "chattel-backend-core"
 version = "0.1.0"
 dependencies = [
+ "entity",
  "sea-orm",
  "tokio",
 ]
@@ -615,6 +619,14 @@ name = "either"
 version = "1.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7fcaabb2fef8c910e7f4c7ce9f67a1283a1715879a7c230ca9d6d1ae31f16d91"
+
+[[package]]
+name = "entity"
+version = "0.1.0"
+dependencies = [
+ "sea-orm",
+ "serde",
+]
 
 [[package]]
 name = "errno"

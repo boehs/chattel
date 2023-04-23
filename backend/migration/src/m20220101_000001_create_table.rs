@@ -90,10 +90,15 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Item::Parent).integer())
                     .col(ColumnDef::new(Item::Title).string().not_null())
                     .col(ColumnDef::new(Item::Body).string())
-                    .col(ColumnDef::new(Item::Type).enumeration(Type::Table, Type::iter().skip(1)))
+                    .col(
+                        ColumnDef::new(Item::Type)
+                            .enumeration(Type::Table, Type::iter().skip(1))
+                            .not_null(),
+                    )
                     .col(
                         ColumnDef::new(Item::Status)
-                            .enumeration(Status::Table, Status::iter().skip(1)),
+                            .enumeration(Status::Table, Status::iter().skip(1))
+                            .not_null(),
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
@@ -117,9 +122,9 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Timeblock::Item).integer())
-                    .col(ColumnDef::new(Timeblock::Start).date_time())
-                    .col(ColumnDef::new(Timeblock::End).date_time())
+                    .col(ColumnDef::new(Timeblock::Item).integer().not_null())
+                    .col(ColumnDef::new(Timeblock::Start).date_time().not_null())
+                    .col(ColumnDef::new(Timeblock::End).date_time().not_null())
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
                             .name("Timeblock_Item")
@@ -131,6 +136,7 @@ impl MigrationTrait for Migration {
             .await
     }
 
+    #[allow(unused_variables)]
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         // Replace the sample below with your own migration scripts
         todo!()
