@@ -4,8 +4,8 @@ diesel::table! {
     items (id) {
         id -> Integer,
         when_type -> Nullable<Integer>,
-        when_date -> Nullable<Date>,
-        deadline -> Nullable<Timestamp>,
+        when_date -> Nullable<TimestamptzSqlite>,
+        deadline -> Nullable<TimestamptzSqlite>,
         parent -> Nullable<Integer>,
         title -> Text,
         body -> Nullable<Text>,
@@ -18,8 +18,8 @@ diesel::table! {
     timeblocks (id) {
         id -> Integer,
         item -> Nullable<Integer>,
-        start_time -> Nullable<Timestamp>,
-        end_time -> Nullable<Timestamp>,
+        start_time -> Nullable<TimestamptzSqlite>,
+        end_time -> Nullable<TimestamptzSqlite>,
     }
 }
 
