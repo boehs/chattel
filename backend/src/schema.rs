@@ -4,8 +4,8 @@ diesel::table! {
     items (id) {
         id -> Integer,
         //when_type -> Nullable<Integer>,
-        //when_date -> Nullable<TimestamptzSqlite>,
-        //deadline -> Nullable<TimestamptzSqlite>,
+        when_date -> Nullable<Date>,
+        deadline -> Nullable<Date>,
         parent -> Nullable<Integer>,
         title -> Text,
         body -> Nullable<Text>,
