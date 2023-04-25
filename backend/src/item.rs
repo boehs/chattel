@@ -1,4 +1,4 @@
-use crate::{models, schema::items};
+use crate::{item, schema::items};
 use chrono::NaiveDate;
 use diesel::{insert_into, prelude::*};
 
@@ -104,7 +104,7 @@ pub fn by_id(
     use self::items::dsl::*;
 
     // This type is needed because of a rust analyzer bug
-    let item: models::Item = items.find(post_id).first::<Item>(conn)?;
+    let item: item::Item = items.find(post_id).first::<Item>(conn)?;
     let mut children_query = Item::belonging_to(&item).into_boxed();
 
     if completed {
