@@ -1,6 +1,6 @@
 use crate::{models, schema::items};
 use chrono::NaiveDate;
-use diesel::prelude::*;
+use diesel::{insert_into, prelude::*};
 
 #[derive(Debug, diesel_derive_enum::DbEnum)]
 pub enum When {
@@ -8,7 +8,7 @@ pub enum When {
     Evening,
     Someday,
     Anytime,
-    Date
+    Date,
 }
 
 #[derive(Debug, diesel_derive_enum::DbEnum)]
@@ -55,7 +55,7 @@ pub enum WhenR {
     Evening,
     Someday,
     Anytime,
-    Date(NaiveDate)
+    Date(NaiveDate),
 }
 
 pub struct ItemReturn {
@@ -72,16 +72,16 @@ pub struct ItemReturn {
 impl From<Item> for ItemReturn {
     fn from(value: Item) -> Self {
         let when = match value.when_type {
-                Some(When::Date) => match value.when_date {
-                    Some(at) => Some(WhenR::Date(at)),
-                    None => None
-                }
-                Some(When::Anytime) => Some(WhenR::Anytime),
-                Some(When::Evening) => Some(WhenR::Evening),
-                Some(When::Someday) => Some(WhenR::Someday),
-                Some(When::Today) => Some(WhenR::Today),
-                None => None
-            };
+            Some(When::Date) => match value.when_date {
+                Some(at) => Some(WhenR::Date(at)),
+                None => None,
+            },
+            Some(When::Anytime) => Some(WhenR::Anytime),
+            Some(When::Evening) => Some(WhenR::Evening),
+            Some(When::Someday) => Some(WhenR::Someday),
+            Some(When::Today) => Some(WhenR::Today),
+            None => None,
+        };
 
         Self {
             id: value.id,
@@ -119,16 +119,41 @@ pub fn by_id(
 
     let children: Vec<Item> = children_query.load::<Item>(conn)?;
 
-    let done = children.into_iter().filter_map(|x| {
-        use ItemType::*;
-        match x.item_type {
-            Project | Item => by_id(x.id, completed, conn).ok(),
-            _ => Some(x.into())
-        }
-    }).collect::<Vec<_>>();
+    let done = children
+        .into_iter()
+        .filter_map(|x| {
+            use ItemType::*;
+            match x.item_type {
+                Project | Item => by_id(x.id, completed, conn).ok(),
+                _ => Some(x.into()),
+            }
+        })
+        .collect::<Vec<_>>();
 
     let mut almost_final: ItemReturn = item.into();
     almost_final.children = Some(Box::new(done));
 
     Ok(almost_final)
+}
+
+#[derive(Insertable)]
+#[diesel(table_name = items)]
+pub struct NewItem<'a> {
+    pub parent: Option<&'a i32>,
+    pub title: &'a str,
+    pub item_type: &'a ItemType,
+    pub item_status: &'a Status,
+}
+
+pub fn create(
+    info: NewItem,
+    conn: &mut SqliteConnection,
+) -> Result<Option<ItemReturn>, diesel::result::Error> {
+    use self::items::dsl::*;
+    let rows: ItemReturn = insert_into(items)
+        .values(&info)
+        .get_results::<Item>(conn)?
+        .remove(0)
+        .into();
+    Ok(Some(rows))
 }
