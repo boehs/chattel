@@ -2,7 +2,7 @@
 
 
 diesel::table! {
-    use crate::models::{WhenMapping,ItemTypeMapping,StatusMapping};
+    use crate::item::{WhenMapping,ItemTypeMapping,StatusMapping};
     use diesel::sql_types::{Nullable, Date, Text, Integer};
     items (id) {
         id -> Integer,

@@ -1,4 +1,4 @@
-pub mod models;
+pub mod item;
 pub mod schema;
 
 use dotenvy::dotenv;
