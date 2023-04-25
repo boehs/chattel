@@ -1,16 +1,19 @@
 // @generated automatically by Diesel CLI.
 
+
 diesel::table! {
+    use crate::models::{WhenMapping,ItemTypeMapping,StatusMapping};
+    use diesel::sql_types::{Nullable, Date, Text, Integer};
     items (id) {
         id -> Integer,
-        //when_type -> Nullable<Integer>,
+        when_type -> Nullable<WhenMapping>,
         when_date -> Nullable<Date>,
         deadline -> Nullable<Date>,
         parent -> Nullable<Integer>,
         title -> Text,
         body -> Nullable<Text>,
-        //item_type -> Integer,
-        //item_status -> Integer,
+        item_type -> ItemTypeMapping,
+        item_status -> StatusMapping,
     }
 }
 
