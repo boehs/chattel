@@ -145,6 +145,7 @@ pub struct NewItem<'a> {
     pub item_status: &'a Status,
 }
 
+// Todo: Check parent (no nesting sections)
 pub fn create(
     info: NewItem,
     conn: &mut SqliteConnection,
@@ -152,6 +153,33 @@ pub fn create(
     use self::items::dsl::*;
     let rows: ItemReturn = insert_into(items)
         .values(&info)
+        .get_results::<Item>(conn)?
+        .remove(0)
+        .into();
+    Ok(Some(rows))
+}
+
+#[derive(AsChangeset)]
+#[diesel(table_name = items)]
+pub struct UpdateItem {
+    pub when_type: Option<When>,
+    pub when_date: Option<NaiveDate>,
+    pub deadline: Option<NaiveDate>,
+    pub parent: Option<i32>,
+    pub title: Option<String>,
+    pub body: Option<String>,
+    pub item_type: Option<ItemType>,
+    pub item_status: Option<Status>,
+}
+
+pub fn update(
+    item_id: i32,
+    updates: UpdateItem,
+    conn: &mut SqliteConnection,
+) -> Result<Option<ItemReturn>, diesel::result::Error> {
+    use self::items::dsl::*;
+    let rows: ItemReturn = diesel::update(items.filter(id.eq(item_id)))
+        .set(updates)
         .get_results::<Item>(conn)?
         .remove(0)
         .into();
