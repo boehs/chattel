@@ -1,5 +1,6 @@
 pub mod item;
 pub mod schema;
+pub mod view;
 
 use dotenvy::dotenv;
 use std::env;

@@ -11,6 +11,7 @@ pub enum When {
     Date,
 }
 
+
 #[derive(Debug, diesel_derive_enum::DbEnum)]
 pub enum ItemType {
     Area,
@@ -39,15 +40,6 @@ pub struct Item {
     pub body: Option<String>,
     pub item_type: ItemType,
     pub item_status: Status,
-}
-
-impl From<Option<When>> for When {
-    fn from(o: Option<When>) -> Self {
-        match o {
-            None => When::Anytime,
-            Some(at) => at,
-        }
-    }
 }
 
 pub enum WhenR {
