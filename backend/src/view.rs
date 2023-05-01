@@ -4,6 +4,7 @@ use crate::{
 };
 use chrono::NaiveDate;
 use diesel::{prelude::*};
+use serde::Serialize;
 
 pub enum Page {
     Inbox,
@@ -15,11 +16,13 @@ pub enum Page {
     Trash,
 }
 
+#[derive(Serialize)]
 pub struct Parents {
     section: Option<crate::item::ItemReturn>,
     project: Option<crate::item::ItemReturn>,
 }
 
+#[derive(Serialize)]
 pub struct ViewItemReturn {
     pub id: i32,
     pub when: Option<WhenR>,

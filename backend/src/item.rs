@@ -1,8 +1,9 @@
 use crate::{item, schema::items};
 use chrono::NaiveDate;
 use diesel::{insert_into, prelude::*};
+use serde::{Serialize, Deserialize};
 
-#[derive(Debug, diesel_derive_enum::DbEnum)]
+#[derive(Debug, diesel_derive_enum::DbEnum, Deserialize)]
 pub enum When {
     Today,
     Evening,
@@ -12,7 +13,7 @@ pub enum When {
 }
 
 
-#[derive(Debug, diesel_derive_enum::DbEnum)]
+#[derive(Debug, diesel_derive_enum::DbEnum, Serialize, Deserialize)]
 pub enum ItemType {
     Area,
     Project,
@@ -20,7 +21,7 @@ pub enum ItemType {
     Item,
 }
 
-#[derive(Debug, diesel_derive_enum::DbEnum)]
+#[derive(Debug, diesel_derive_enum::DbEnum, Serialize, Deserialize)]
 pub enum Status {
     ToDo,
     Completed,
@@ -42,6 +43,7 @@ pub struct Item {
     pub item_status: Status,
 }
 
+#[derive(Serialize)]
 pub enum WhenR {
     Today,
     Evening,
@@ -50,6 +52,7 @@ pub enum WhenR {
     Date(NaiveDate),
 }
 
+#[derive(Serialize)]
 pub struct ItemReturn {
     pub id: i32,
     pub when: Option<WhenR>,
@@ -128,13 +131,13 @@ pub fn by_id(
     Ok(almost_final)
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Serialize, Deserialize)]
 #[diesel(table_name = items)]
-pub struct NewItem<'a> {
-    pub parent: Option<&'a i32>,
-    pub title: &'a str,
-    pub item_type: &'a ItemType,
-    pub item_status: &'a Status,
+pub struct NewItem {
+    pub parent: Option<i32>,
+    pub title: String,
+    pub item_type: ItemType,
+    pub item_status: Status,
 }
 
 // Todo: Check parent (no nesting sections)
@@ -151,7 +154,7 @@ pub fn create(
     Ok(Some(rows))
 }
 
-#[derive(AsChangeset)]
+#[derive(AsChangeset, Deserialize)]
 #[diesel(table_name = items)]
 pub struct UpdateItem {
     pub when_type: Option<When>,
