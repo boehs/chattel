@@ -5,14 +5,12 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use backend::*;
 use deadpool_diesel::sqlite::*;
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use std::net::SocketAddr;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-use backend::*;
 
-// this embeddes the migrations into the application binary
-// the migration path is releative to the `CARGO_MANIFEST_DIR`
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("../migrations/");
 
 #[tokio::main]
@@ -41,32 +39,42 @@ async fn main() {
         .route("/item/create", post(create_item))
         .with_state(pool);
 
-        let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-        tracing::debug!("listening on {}", addr);
-        axum::Server::bind(&addr)
-            .serve(app.into_make_service())
-            .await
-            .unwrap();
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    tracing::debug!("listening on {}", addr);
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
+}
+
+async fn sql<'a, F, T, E>(pool: &'a Pool, f: F) -> Result<T, (StatusCode, String)>
+where
+    F: FnOnce(&mut diesel::SqliteConnection) -> Result<T, E> + Send + 'static,
+    E: std::error::Error + Send + 'static,
+    T: Send + 'static,
+{
+    let conn = pool.get().await.map_err(internal_error)?;
+    let res = conn
+        .interact(f)
+        .await
+        .map_err(internal_error)?
+        .map_err(internal_error)?;
+    Ok(res)
 }
 
 async fn create_item(
     State(pool): State<Pool>,
     Json(new_item): Json<item::NewItem>,
 ) -> Result<Json<Option<item::ItemReturn>>, (StatusCode, String)> {
-    let conn = pool.get().await.map_err(internal_error)?;
-    let res = conn
-        .interact(|conn| item::create(new_item, conn))
+    sql(&pool, |f| item::create(new_item, f))
         .await
-        .map_err(internal_error)?
-        .map_err(internal_error)?;
-    Ok(Json(res))
+        .map(|x| Json(x))
 }
 
-/// Utility function for mapping any error into a `500 Internal Server Error`
-/// response.
 fn internal_error<E>(err: E) -> (StatusCode, String)
 where
     E: std::error::Error,
 {
+    tracing::warn!("500: {}", err.to_string());
     (StatusCode::INTERNAL_SERVER_ERROR, err.to_string())
 }
